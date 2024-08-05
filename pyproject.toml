@@ -1,0 +1,22 @@
+[tool.poetry]
+name = "werk"
+version = "0.1.0"
+description = ""
+authors = ["cayubweeums <calebwill165@gmail.com>"]
+license = "M.I.T. License"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+flet = "^0.23.2"
+rich = "^13.7.1"
+pytest = "^8.3.2"
+pymongo = "^4.8.0"
+garminconnect = "^0.2.19"
+garth = "^0.4.46"
+requests = "^2.32.3"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

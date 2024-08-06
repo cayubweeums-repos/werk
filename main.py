@@ -44,14 +44,14 @@ pretty.install()
 console = Console()
 
 _time = datetime.date.today()
-if not os.path.exists('./data'):
-    os.makedirs('./data')
-    os.makedirs('./data/logs')
-    os.makedirs('./data/db')
-elif not os.path.exists('./data/logs'):
-    os.makedirs('./data/logs')
-elif not os.path.exists('./data/db'):
-    os.makedirs('./data/db')
+if not os.path.exists('/data'):
+    os.makedirs('/data')
+    os.makedirs('/data/logs')
+    os.makedirs('/data/db')
+elif not os.path.exists('/data/logs'):
+    os.makedirs('/data/logs')
+elif not os.path.exists('/data/db'):
+    os.makedirs('/data/db')
 FORMAT = '%(asctime)s %(levelname)-8s %(message)s'
 logging.basicConfig(filename='./data/logs/{}.log'.format(_time), format=FORMAT, level=logging.DEBUG, datefmt="[%X]")
 log = logging.getLogger("rich")

@@ -13,6 +13,19 @@ cd werk
 poetry install
 ```
 
+# Setup local dev env
+```
+# For conventional commits and versioning
+sudo apt-get install npm -y
+
+npm install -g commitizen
+```
+
+For all commits
+```
+git cz
+```
+
 # Running
 ```
 poetry run python main.py

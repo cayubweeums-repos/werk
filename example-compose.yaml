@@ -6,7 +6,7 @@ services:
       TZ: "America/Chicago"
       ADMIN_NAME: "admin"
       ADMIN_PASS: "changeme"
-      HOST_IP: "192.168.29.45"
+      HOST_IP: "host_ip_address_here"
     build:
       context: .
     ports:
@@ -44,3 +44,14 @@ services:
       ME_CONFIG_MONGODB_ADMINUSERNAME: root
       ME_CONFIG_MONGODB_ADMINPASSWORD: example
       ME_CONFIG_MONGODB_URL: mongodb://root:example@database:27017/
+
+  watchtower:
+    image: containrrr/watchtower
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /root/.docker/config.json:/config.json
+    environment:
+      - TZ=America/Chicago
+      - WATCHTOWER_NOTIFICATION_URL=[SomeWebHook]
+    restart: unless-stopped
+    command: --interval 60

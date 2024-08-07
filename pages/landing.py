@@ -3,7 +3,7 @@ import flet as ft
 class Landing_Page(ft.View):
     def __init__(self, page: ft.Page, log):
         super(Landing_Page, self).__init__(
-            route="/", horizontal_alignment="center", vertical_alignment="center"
+            route="/home", horizontal_alignment="center", vertical_alignment="center"
         )
         self.page = page
         

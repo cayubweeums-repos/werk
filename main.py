@@ -53,9 +53,13 @@ elif not os.path.exists('/data/logs'):
 elif not os.path.exists('/data/db'):
     os.makedirs('/data/db')
 FORMAT = '%(asctime)s %(levelname)-8s %(message)s'
-logging.basicConfig(filename='./data/logs/{}.log'.format(_time), format=FORMAT, level=logging.DEBUG, datefmt="[%X]")
+logging.basicConfig(filename='/data/logs/{}.log'.format(_time), format=FORMAT, level=logging.DEBUG, datefmt="[%X]")
 log = logging.getLogger("rich")
 log.addHandler(RichHandler())
+
+# Get values set in compose file
+admin_name = os.getenv('ADMIN_NAME')
+admin_pass = os.getenv('ADMIN_PASS')
 """
 #----------------------------------
 """
@@ -78,5 +82,7 @@ async def main(page: Page):
 
     page.on_route_change = route_change
     page.go(page.route)
+    
+    log.error(f"Admin name is: {admin_name}\nAdmin pass is: {admin_pass}")
 
 ft.app(target=main, view=ft.WEB_BROWSER, port=5554)

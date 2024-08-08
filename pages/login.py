@@ -1,4 +1,5 @@
 import flet as ft
+from utils import db_helpers
 
 class Login_Page(ft.View):
     def __init__(self, page: ft.Page, log):
@@ -32,8 +33,15 @@ class Login_Page(ft.View):
             self.button_submit.disabled = True
             
         self.page.update()
-        
-        
+
     def submit(self, e: ft.ControlEvent) -> None:
+        if db_helpers.auth_user('users', self.text_username.value, self.text_password.value, self.page.session_id):
+            self.page.go(f"/home")
+        else:
+            self.controls.append(
+                ft.Text(value='Bad Username or Password try again scrub')
+            )
+            self.page.update()
+
         self.log.error(f'Username: {self.text_username.value}')
         self.log.error(f'Password: {self.text_password.value}')

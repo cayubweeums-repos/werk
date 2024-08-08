@@ -11,6 +11,7 @@ from rich.logging import RichHandler
 from rich.traceback import install
 from rich import pretty
 from rich.console import Console
+from utils import db_helpers, general
 
 from pages.landing import Landing_Page
 from pages.views_handler import views_handler
@@ -60,15 +61,46 @@ log.addHandler(RichHandler())
 # Get values set in compose file
 admin_name = os.getenv('ADMIN_NAME')
 admin_pass = os.getenv('ADMIN_PASS')
+
+# Init DB if not already initialized
+init_data={
+    'username': admin_name,
+    'password': general.get_hashed_pass(admin_pass),
+    'authenticated_sessions': []
+}
+db_helpers.insert_db('werk', 'users', init_data, log)
+
+
 """
 #----------------------------------
 """
 
 async def main(page: Page):
-    
     page.title = "W.I.P. werk"
     page.theme_mode = 'dark'
     page.theme = theme.Theme(color_scheme_seed='blue')
+    
+    def user_disconnect():
+        log.warn(f'Disconnect detected, running cleanup on session {page.session_id}')
+        
+        user_row = db_helpers.get_row_db('users', 'authenticated_sessions', page.session_id)
+        
+        log.warn(f"Attempting to remove session {page.session_id} from the user {user_row['username']}")
+        
+        try:
+            user_row.update_one(
+                {"_id": user_row["_id"]},  # Find the user by _id
+                {"$pull": {"authenticated_sessions": page.session_id}}  # Remove the session_id from the list
+            )
+            
+            log.info(f"Successfully removed session {page.session_id} from the user {user_row['username']}")
+
+        except:
+            log.error(f"FAILED to remove session {page.session_id} from the user {user_row['username']}")
+    
+    page.on_disconnect = user_disconnect
+    
+    log.error(f"current session {page.session_id}")
     
     console.print(logo)
 
@@ -84,5 +116,6 @@ async def main(page: Page):
     page.go(page.route)
     
     log.error(f"Admin name is: {admin_name}\nAdmin pass is: {admin_pass}")
+    log.error(f"Running the hash again = {general.get_hashed_pass(admin_pass)}")
 
 ft.app(target=main, view=ft.WEB_BROWSER, port=5554)

@@ -28,9 +28,9 @@ def insert_db(database: str, collection: str, init_data: dict, log):
         db = client[database]
         collection = db[collection]
         collection.insert_one(init_data)
-        log.info(f'Successfully created database {database} with collection {collection} with initial data {init_data}')
+        log.debug(f'Successfully created database {database} with collection {collection} with initial data {init_data}')
     else:
-        log.info(f"Database '{database}' already exists.")
+        log.debug(f"Database '{database}' already exists.")
         
 def insert_row(collection: str, data: dict):
     conn = connect_db(collection)
@@ -49,6 +49,14 @@ def get_all_rows_db(collection) -> list:
 def update_row_db(collection, filter, update):
     collection.update_one(filter, {"$set": update})
     
+def update_user_field_db(username, field, update, log):
+    conn = connect_db('users')
+    log.debug(f'Updating one field for user {username} on field {field}')
+    conn[2].update_one(
+        {'username': username},
+        {"$set": {field: str(update)}}
+    )
+    
 def close_db(client: MongoClient):
     client.close()
     
@@ -63,17 +71,37 @@ def check_if_user_exists(collection, username, log) -> bool:
         get_row_db(collection, 'username', username)
         return True
     except:
-        log.warn(f'Username {username} does not exist in the collection {collection}')
+        log.warning(f'Username {username} does not exist in the collection {collection}')
         return False
 
-def auth_user(collection, username, password, current_session) -> bool:
+def auth_user(collection, username, password, current_session, log) -> bool:
+    log.debug('Attempting to authenticate user')
     user_row = get_row_db(collection, 'username', username)
+    log.warn(f'{user_row}')
     print(user_row)
     if general.check_passwords(password, user_row['password']):
+        log.debug(f"{user_row['username']} successfully authenticated")
         print("Authentication successful")
         
-        user_row['authenticated_sessions'].append(current_session)
+        update_user_field_db(username, 'authenticated_session', current_session, log)
+        
         return True
     else:
-        print("Authentication failed: Incorrect password")
+        log.warning('Authentication failed: Incorrect password')
+        return False
+
+
+# Session Administration
+
+def check_if_authenticated_session(session_id, log):
+    log.debug(f'Checking if {session_id} is an authenticated session')
+    conn = connect_db('users')
+    
+    user_row = conn[2].find_one({'authenticated_session': str(session_id)})
+    
+    if user_row:
+        log.debug(f"Session ID {session_id} is active for user: {user_row['username']}.")
+        return True
+    else:
+        log.warn(f"Session ID {session_id} is not active for any user.")
         return False

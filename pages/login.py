@@ -35,13 +35,10 @@ class Login_Page(ft.View):
         self.page.update()
 
     def submit(self, e: ft.ControlEvent) -> None:
-        if db_helpers.auth_user('users', self.text_username.value, self.text_password.value, self.page.session_id):
+        if db_helpers.auth_user('users', self.text_username.value, self.text_password.value, self.page.session_id, self.log):
             self.page.go(f"/home")
         else:
             self.controls.append(
                 ft.Text(value='Bad Username or Password try again scrub')
             )
             self.page.update()
-
-        self.log.error(f'Username: {self.text_username.value}')
-        self.log.error(f'Password: {self.text_password.value}')

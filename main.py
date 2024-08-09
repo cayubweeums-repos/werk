@@ -66,10 +66,24 @@ admin_pass = os.getenv('ADMIN_PASS')
 init_data={
     'username': admin_name,
     'password': general.get_hashed_pass(admin_pass),
-    'authenticated_sessions': []
+    'authenticated_session': ''
 }
 db_helpers.insert_db('werk', 'users', init_data, log)
 
+
+def user_disconnect(e):
+    log.warning(f'Disconnect detected, running cleanup on session {e.page.session_id}')
+    
+    user_row = db_helpers.get_row_db('users', 'authenticated_session', e.page.session_id)
+    
+    log.warning(f"Attempting to remove session {e.page.session_id} from the user {user_row['username']}")
+    
+    try:
+        db_helpers.update_user_field_db(user_row['username'], 'authenticated_session', '', log)
+        
+        log.debug(f"Successfully removed session {e.page.session_id} from the user {user_row['username']}")
+    except:
+        log.error(f"FAILED to remove session {e.page.session_id} from the user {user_row['username']}")
 
 """
 #----------------------------------
@@ -80,42 +94,32 @@ async def main(page: Page):
     page.theme_mode = 'dark'
     page.theme = theme.Theme(color_scheme_seed='blue')
     
-    def user_disconnect():
-        log.warn(f'Disconnect detected, running cleanup on session {page.session_id}')
-        
-        user_row = db_helpers.get_row_db('users', 'authenticated_sessions', page.session_id)
-        
-        log.warn(f"Attempting to remove session {page.session_id} from the user {user_row['username']}")
-        
-        try:
-            user_row.update_one(
-                {"_id": user_row["_id"]},  # Find the user by _id
-                {"$pull": {"authenticated_sessions": page.session_id}}  # Remove the session_id from the list
-            )
-            
-            log.info(f"Successfully removed session {page.session_id} from the user {user_row['username']}")
-
-        except:
-            log.error(f"FAILED to remove session {page.session_id} from the user {user_row['username']}")
-    
     page.on_disconnect = user_disconnect
     
-    log.error(f"current session {page.session_id}")
+    log.debug(f"current session {page.session_id}")
     
     console.print(logo)
 
     def route_change(e):
-        print("Route change:", e.route)
-        page.views.clear()
-        page.views.append(
-            views_handler(page, log)[e.route]
-        )
-        page.update()
+        if db_helpers.check_if_authenticated_session(page.session_id, log):
+            log.debug(f"Route change: {e.route}")
+            page.views.clear()
+            page.views.append(
+                views_handler(page, log)[e.route]
+            )
+            page.update()
+        else:
+            page.route = "/"
+            log.warning(f"Not authenticated route change request to route: {e.route} - Rerouting to login page")
+            page.views.clear()
+            page.views.append(
+                views_handler(page, log)[page.route]
+            )
+            page.update()
+            
 
     page.on_route_change = route_change
     page.go(page.route)
     
-    log.error(f"Admin name is: {admin_name}\nAdmin pass is: {admin_pass}")
-    log.error(f"Running the hash again = {general.get_hashed_pass(admin_pass)}")
 
 ft.app(target=main, view=ft.WEB_BROWSER, port=5554)

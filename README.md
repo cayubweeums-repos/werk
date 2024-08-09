@@ -30,3 +30,11 @@ git cz
 ```
 poetry run python main.py
 ```
+
+# Design Reference Ideas
+- https://dribbble.com/shots/16340251-Tasking-Task-manager-mobile-app
+- https://dribbble.com/shots/23355141-Dashboard-HR-Management
+- https://dribbble.com/shots/22303434-Fitness-App-UI
+
+# Will leverage this db for lifts
+- https://github.com/cayubweeums-repos/exercise-db

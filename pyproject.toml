@@ -15,6 +15,7 @@ pymongo = "^4.8.0"
 garminconnect = "^0.2.19"
 garth = "^0.4.46"
 requests = "^2.32.3"
+bcrypt = "^4.2.0"
 
 
 [build-system]

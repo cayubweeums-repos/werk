@@ -66,9 +66,15 @@ admin_name = os.getenv('ADMIN_NAME')
 admin_pass = os.getenv('ADMIN_PASS')
 
 # Init DB if it does not already exist
-admin_user = User(admin_name, admin_pass, [], {}, {})
+admin_user = User(admin_name, admin_pass, [], {}, {}, {})
 db_helpers.insert_db('werk', 'users', admin_user.to_dict(), log)
-
+os.makedirs('/data/external/exercise_db', exist_ok=True)
+try:
+    subprocess.run(["git", "clone", "https://github.com/cayubweeums-repos/exercise-db.git", "/data/external/exercise_db/"], check=True)
+    log.debug("Exercise-DB successfully cloned")
+    db_helpers.ingest_exercise_db(log)
+except subprocess.CalledProcessError as e:
+    log.error(f"Error caught while trying to clone the exercise-db repo from github {e}")
 
 def user_disconnect(e):
     log.warning(f'Disconnect detected, running cleanup on session {e.page.session_id}')

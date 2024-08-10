@@ -1,10 +1,12 @@
 # Collection of helpers to interact with DB
 import os
+import json
 import pymongo
 from pymongo import MongoClient
 from utils import general
 import logging
 from objects.user import User
+from objects.exercise import Exercise
 
 # DB system interactions
 def connect_db(collection: str):
@@ -32,6 +34,22 @@ def insert_db(database: str, collection: str, init_data, log):
         log.debug(f'Successfully created database {database} with collection {collection} with initial data {init_data}')
     else:
         log.debug(f"Database '{database}' already exists.")
+        
+def ingest_exercise_db(log):
+    # Load the JSON data from the file
+    with open('/data/external/exercise_db/dist/exercises.json', 'r') as file:
+        exercises = json.load(file)
+
+    init_exercise = Exercise.from_dict(exercises[0])
+
+    insert_db('werk', 'exercises', init_exercise.to_dict(), log)
+    
+    conn = connect_db('exercises')
+    for exercise in exercises[1:]:
+        e = Exercise.from_dict(exercise)
+        results = conn[2].insert_one(e.to_dict())
+        
+    log.debug('Exercise_db ingested to mongodb')
         
 def insert_row(collection: str, data: dict):
     conn = connect_db(collection)

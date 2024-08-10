@@ -39,6 +39,24 @@ class Exercise:
             primaryMuscles=data.get('primaryMuscles'),
             secondaryMuscles=data.get('secondaryMuscles'),
             instructions=data.get('instructions'),
+            category=data.get('category'),
+            images=data.get('images')
+        )
+
+    @classmethod
+    def from_json(cls, json_str):
+        # Deserialize the JSON string back into a dictionary
+        data = json.loads(json_str)
+        
+        # Create an instance of the class using the deserialized data
+        return cls(
+            name=data.get('username'),
+            level=data.get('level'),
+            mechanic=data.get('mechanic'),
+            equipment=data.get('equipment'),
+            primaryMuscles=data.get('primaryMuscles'),
+            secondaryMuscles=data.get('secondaryMuscles'),
+            instructions=data.get('instructions'),
             categroy=data.get('category'),
             images=data.get('images')
         )

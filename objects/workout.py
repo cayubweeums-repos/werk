@@ -25,4 +25,3 @@ class Workout:
     def __repr__(self):
         return f"Workout(name={self.name}, included_exercises={self.included_exercises})"
     
-    

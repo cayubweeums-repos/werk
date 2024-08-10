@@ -11,7 +11,10 @@ from rich.logging import RichHandler
 from rich.traceback import install
 from rich import pretty
 from rich.console import Console
+
+
 from utils import db_helpers, general
+from objects.user import User
 
 from pages.landing import Landing_Page
 from pages.views_handler import views_handler
@@ -62,13 +65,9 @@ log.addHandler(RichHandler())
 admin_name = os.getenv('ADMIN_NAME')
 admin_pass = os.getenv('ADMIN_PASS')
 
-# Init DB if not already initialized
-init_data={
-    'username': admin_name,
-    'password': general.get_hashed_pass(admin_pass),
-    'authenticated_session': ''
-}
-db_helpers.insert_db('werk', 'users', init_data, log)
+# Init DB if it does not already exist
+admin_user = User(admin_name, admin_pass, [], {}, {})
+db_helpers.insert_db('werk', 'users', admin_user.to_dict(), log)
 
 
 def user_disconnect(e):

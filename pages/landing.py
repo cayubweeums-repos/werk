@@ -1,4 +1,6 @@
 import flet as ft
+from utils import db_helpers
+from packages.controls.nav_button import Nav
 
 class Landing_Page(ft.View):
     def __init__(self, page: ft.Page, log):
@@ -9,12 +11,20 @@ class Landing_Page(ft.View):
         
         self.log = log
         
+        # Get all autocomplete suggestions
+        conn = db_helpers.connect_db('exercises')
+        all_suggestions = []
+        for row in conn[2].find():
+            all_suggestions.append(ft.AutoCompleteSuggestion(key=row['autocomplete_keys'], value=row['name']))
+        
+        
         self.controls = [
-            ft.Row(
-                alignment = 'center',
+            ft.Column(
                 controls=[
-                    ft.ElevatedButton("button 1", on_click=self.button1),
-                    ft.ElevatedButton("button 2", on_click=self.button2)
+                    ft.AutoComplete(
+                        suggestions=all_suggestions,
+                        on_select=lambda e: print(e.control.selected_index, e.selection),
+                    )
                 ]
             )
         ]

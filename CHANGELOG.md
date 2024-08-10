@@ -1,3 +1,14 @@
+# [0.3.0](https://github.com/cayubweeums-repos/werk/compare/v0.2.0...v0.3.0) (2024-08-10)
+
+
+### Features
+
+* adds activity object, adds exercise_db population for later indexing ([7526a2a](https://github.com/cayubweeums-repos/werk/commit/7526a2aec7140b64ff04e1623d9d32dc99417f13))
+* adds User object ([ae66d7f](https://github.com/cayubweeums-repos/werk/commit/ae66d7ff005cfd665a0e3f7950ea8c07774c48c7))
+* creates workout and exercise objects ([6ad341d](https://github.com/cayubweeums-repos/werk/commit/6ad341d9599dd84f89555cbdfaa97c90696b1988))
+
+
+
 # [0.2.0](https://github.com/cayubweeums-repos/werk/compare/v0.1.0...v0.2.0) (2024-08-09)
 
 

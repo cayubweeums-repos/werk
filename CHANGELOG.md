@@ -1,3 +1,12 @@
+# [0.4.0](https://github.com/cayubweeums-repos/werk/compare/v0.3.0...v0.4.0) (2024-08-10)
+
+
+### Features
+
+* adds autocomplete exercise capabilities ([d4af0d5](https://github.com/cayubweeums-repos/werk/commit/d4af0d5f491cd22df755238b56ce4405479cefb4))
+
+
+
 # [0.3.0](https://github.com/cayubweeums-repos/werk/compare/v0.2.0...v0.3.0) (2024-08-10)
 
 

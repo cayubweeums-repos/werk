@@ -5,6 +5,15 @@ class Workout:
     def __init__(self, name, included_exercises):
         
         self.name = name
+        
+        # Is in the format {
+            # 'Exercise.name': {
+                # 'object': Exercise object, 
+                # 'sets': str,
+                # 'reps': str,
+                # 'weight': [length matching Sets],
+                # }
+            # }
         self.included_exercises = included_exercises
  
     def to_dict(self):
@@ -24,4 +33,3 @@ class Workout:
 
     def __repr__(self):
         return f"Workout(name={self.name}, included_exercises={self.included_exercises})"
-    

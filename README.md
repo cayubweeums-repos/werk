@@ -1,5 +1,5 @@
 # werk
-werk is a workout app that I always wish was out there
+werk is a workout app that I always wished was out there
 
 # prereqs
 

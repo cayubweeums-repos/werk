@@ -1,6 +1,6 @@
 import flet as ft
 from utils import db_helpers
-from packages.controls.nav_button import Nav
+#from packages.controls.nav_button import Nav
 
 class Landing_Page(ft.View):
     def __init__(self, page: ft.Page, log):

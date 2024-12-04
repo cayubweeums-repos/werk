@@ -11,7 +11,7 @@ from objects.exercise import Exercise
 # DB system interactions
 def connect_db(collection: str):
     # Client Connection
-    client = MongoClient(f"mongodb://root:example@192.168.29.45:27017/") # TODO placeholder creds
+    client = MongoClient(f"mongodb://root:example@192.168.2.163:27017/") # TODO placeholder creds
     # Database
     database = client['werk']
     # Collection
@@ -21,9 +21,9 @@ def connect_db(collection: str):
 def insert_db(database: str, collection: str, init_data, log):
     # Client Connection
     try:
-        client = MongoClient(f"mongodb://root:example@192.168.29.45:27017/")
+        client = MongoClient(f"mongodb://root:example@192.168.2.163:27017/")
     except:
-        log.error(f'Unable to connecto to MongoDB at 192.168.29.45:27017')
+        log.error(f'Unable to connecto to MongoDB at 192.168.2.163:27017')
     
     # Check if the database already exists
     if database not in client.list_database_names():

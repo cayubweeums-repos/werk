@@ -6,7 +6,7 @@ import subprocess
 import datetime
 import logging
 import flet as ft
-from flet import theme, Page
+from flet import Page
 from rich.logging import RichHandler
 from rich.traceback import install
 from rich import pretty
@@ -97,7 +97,7 @@ def user_disconnect(e):
 async def main(page: Page):
     page.title = "W.I.P. werk"
     page.theme_mode = 'dark'
-    page.theme = theme.Theme(color_scheme_seed='blue')
+    page.theme = ft.Theme(color_scheme_seed='blue')
     
     page.on_disconnect = user_disconnect
     

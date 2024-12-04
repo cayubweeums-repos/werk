@@ -6,13 +6,13 @@ services:
       TZ: "America/Chicago"
       ADMIN_NAME: "admin"
       ADMIN_PASS: "changeme"
-      HOST_IP: "192.168.29.45"
+      HOST_IP: "192.168.2.163"
     build:
       context: .
     ports:
       - 5554:5554
     volumes: 
-      - ./data:/data
+      - ./data:/data:z
     healthcheck:
       test: wget --no-verbose --tries=1 --spider http://localhost:5554
       interval: 10s
@@ -25,7 +25,7 @@ services:
     image: mongo
     restart: always
     volumes:
-      - ./data/db:/data/db
+      - ./data/db:/data/db:z
     ports:
       - 27017:27017
     environment:

@@ -1,3 +1,12 @@
+## [0.4.1](https://github.com/cayubweeums-repos/werk/compare/v0.4.0...v0.4.1) (2024-12-04)
+
+
+### Bug Fixes
+
+* makes main branch run ([17d7c32](https://github.com/cayubweeums-repos/werk/commit/17d7c323d8b2b4fa6ec1146b957eb61ef706d3ce))
+
+
+
 # [0.4.0](https://github.com/cayubweeums-repos/werk/compare/v0.3.0...v0.4.0) (2024-08-10)
 
 

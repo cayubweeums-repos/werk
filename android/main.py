@@ -10,7 +10,7 @@ from rich.logging import RichHandler
 from rich.traceback import install
 from rich import pretty
 from utils.theme import get_app_theme, get_dark_theme
-from pages.base_page import create_app_bar, create_side_panel
+from pages.base_page import create_bottom_app_bar, create_floating_action_button
 from pages.home_page import Home_Content
 
 """
@@ -73,18 +73,14 @@ def main(page: ft.Page):
         #     page.go(f"/tasks/{task_id}")
 
     content_column = ft.Column(expand=True)
-    sidebar = create_side_panel(change_view)
 
-    def toggle_sidebar(e):
-        sidebar.width = 200 if sidebar.width == 0 else 0
-        sidebar.update()
-
-    page.appbar = create_app_bar(page, toggle_sidebar)
+    page.bottom_appbar = create_bottom_app_bar(page)
+    page.floating_action_button = create_floating_action_button()
+    page.floating_action_button_location = ft.FloatingActionButtonLocation.CENTER_DOCKED
 
     page.add(
         ft.Row(
             [
-                sidebar,
                 ft.Column(
                     [content_column],
                     expand=True

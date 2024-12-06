@@ -1,28 +1,36 @@
 import flet as ft
 
-def create_app_bar(page: ft.Page, toggle_sidebar):
-    return ft.AppBar(
-        title=ft.Text("werk"),
-        leading=ft.IconButton(icon=ft.icons.MENU, on_click=toggle_sidebar),
+def create_bottom_app_bar(page: ft.Page):
+    return ft.BottomAppBar(
         bgcolor=ft.colors.SURFACE_VARIANT,
+        shape=ft.NotchShape.CIRCULAR, # can also be AUTO
+        content=ft.Row(
+            controls=[
+                ft.IconButton(
+                    icon=ft.Icons.FITNESS_CENTER,
+                    icon_color=ft.Colors.PRIMARY,
+                    icon_size=32,
+
+                ),
+                ft.Container(expand=True),
+                ft.IconButton(
+                    icon=ft.Icons.HISTORY,
+                    icon_color=ft.Colors.PRIMARY,
+                    icon_size=32,
+                ),
+            ]
+        ),
     )
 
-def create_side_panel(change_view):
-    return ft.Container(
-        content=ft.Column(
-            [
-                # ft.Container(height=40),
-                ft.Text("Menu", size=20, weight="bold"),
-                ft.TextButton("Home", icon=ft.icons.HOME, on_click=lambda e: change_view('home')),
-                ft.TextButton("Dashboard", icon=ft.icons.DASHBOARD, on_click=lambda e: change_view("dashboard")),
-                ft.TextButton("Reports", icon=ft.icons.ASSESSMENT),
-                ft.TextButton("Settings", icon=ft.icons.SETTINGS, on_click=lambda e: change_view("settings")),
-            ],
-            # tight=True,
+def create_floating_action_button():
+    return ft.FloatingActionButton(
+        icon=ft.icons.FITNESS_CENTER,
+        bgcolor=ft.colors.SECONDARY,
+        content=ft.Icon(
+            name=ft.icons.FITNESS_CENTER,
+            color=ft.colors.ON_SECONDARY,
+            size=40,
         ),
-        bgcolor=ft.colors.SURFACE_VARIANT,
-        width=0,
-        animate=ft.animation.Animation(300, "decelerate"),
-        padding=ft.padding.only(left=20, top=20, bottom=20),
-        clip_behavior=ft.ClipBehavior.HARD_EDGE,
+        width=70,
+        height=70,
     )

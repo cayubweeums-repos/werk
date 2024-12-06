@@ -1,6 +1,8 @@
 # werk
 werk is a workout app that I always wished was out there
 
+running the app with poetry run flet run --android will give a hot reloading app you can use on your phone
+
 # prereqs
 
 Install poetry and python

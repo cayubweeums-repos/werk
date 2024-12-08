@@ -12,6 +12,12 @@ from rich import pretty
 from utils.theme import get_app_theme, get_dark_theme
 from pages.base_page import create_bottom_app_bar, create_floating_action_button
 from pages.home_page import Home_Content
+from pages.first_time_setup import Setup_Content
+from services.storage_service import LocalStorageService
+from repositories.storage_repository import StorageRepository
+from repositories.config_repository import ConfigRepository
+
+
 
 """
 Dir setup
@@ -40,39 +46,43 @@ def main(page: ft.Page):
     page.dark_theme = get_dark_theme()
     page.vertical_alignment = ft.MainAxisAlignment.CENTER
 
+    storage_service = LocalStorageService()
+    storage_repository = StorageRepository(storage_service)
+    config_repository = ConfigRepository()
+    is_first_time = config_repository.check_initial_setup()
+
     # Initialize page contents and routing
-    home_page = Home_Content(page)
-    # settings_page = Settings_Content(page)
+    home_page = Home_Content(page, config_repository)
+    setup_page = Setup_Content(page, config_repository, storage_repository)
+
+    content_column = ft.Column(expand=True)
 
     def route_change(route):
+        log.debug(f"First time: {is_first_time}")
+        log.debug(f"Route change: {route.route}")
         troute = ft.TemplateRoute(page.route)
         content_column.controls.clear()
 
-        if troute.match("/"):
-            content_column.controls.append(home_page.get_content())
-        # elif troute.match("/tasks/:task_id"):
-        #     task_page = Task_Content(page, troute.task_id)
-        #     content_column.controls.append(task_page.get_content())
+        if is_first_time:
+            content_column.controls.append(setup_page.get_content())
+            # Hide navigation elements for setup
+            page.bottom_appbar.visible = False
+            page.floating_action_button.visible = False
         else:
-            content_column.controls.append(home_page.get_content())
+            if troute.match("/"):
+                log.debug(f"ROUTEING TO HOME")
+                content_column.controls.append(home_page.get_content())
+                page.bottom_appbar.visible = True
+                page.floating_action_button.visible = True
+            else:
+                log.debug(f"NO MATCH FOUND, ROUTING TO HOME")
+                content_column.controls.append(home_page.get_content())
+                page.bottom_appbar.visible = True
+                page.floating_action_button.visible = True
 
         page.update()
 
-    def view_pop(view):
-        page.views.pop()
-        top_view = page.views[-1]
-        page.go(top_view.route)
-
     page.on_route_change = route_change
-    page.on_view_pop = view_pop
-
-    def change_view(view_name, task_id=None):
-        if view_name == "home":
-            page.go("/")
-        # elif view_name == "task" and task_id is not None:
-        #     page.go(f"/tasks/{task_id}")
-
-    content_column = ft.Column(expand=True)
 
     page.bottom_appbar = create_bottom_app_bar(page)
     page.floating_action_button = create_floating_action_button()
@@ -90,6 +100,14 @@ def main(page: ft.Page):
         )
     )
 
-    page.go("/")
+    if is_first_time:
+        content_column.controls.append(setup_page.get_content())
+        # Hide navigation elements for setup
+        page.bottom_appbar.visible = False
+        page.floating_action_button.visible = False
+        page.update()
+        is_first_time = False
+    else:
+        page.go("/")
 
 ft.app(main)

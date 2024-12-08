@@ -5,9 +5,9 @@ import logging
 
 
 class Home_Content:
-    def __init__(self, page):
+    def __init__(self, page, config_repository):
         self.page = page
-
+        self.config_repository = config_repository
         self.logger = logging.getLogger("frontend_main")
 
         self.page.update()
@@ -31,6 +31,13 @@ class Home_Content:
                                 shape=ft.RoundedRectangleBorder(radius=10),
                             )
                         ),
+                        ft.Container(
+                            content=ft.Markdown(
+                                self.get_config_markdown(),
+                                selectable=True,
+                            ),
+                            padding=50,
+                        )
                     ],
                     horizontal_alignment=ft.CrossAxisAlignment.CENTER,
                 ),
@@ -53,3 +60,25 @@ class Home_Content:
 
     def get_content(self):
         return self.content
+
+    def get_config_markdown(self):
+        try:
+            storage_type = self.config_repository.get_config("storage.type")
+            connection_config = self.config_repository.get_config("connection.config")
+            
+            return f"""
+                # Current Configuration
+
+                ## Storage Type
+                `{storage_type}`
+
+                ## Connection Config
+                ```json
+                {connection_config}
+            """ 
+
+        except Exception as e:
+            self.logger.error(f"Error formatting config: {str(e)}") 
+            return "# Error loading configuration"
+
+

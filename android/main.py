@@ -13,10 +13,9 @@ from utils.theme import get_app_theme, get_dark_theme
 from pages.base_page import create_bottom_app_bar, create_floating_action_button
 from pages.home_page import Home_Content
 from pages.first_time_setup import Setup_Content
-from services.storage_service import LocalStorageService
-from repositories.storage_repository import StorageRepository
 from repositories.config_repository import ConfigRepository
-
+from repositories.local_storage import LocalStorageRepository
+from pages.workout_creation import Workout_Creation_Content
 
 
 """
@@ -46,14 +45,14 @@ def main(page: ft.Page):
     page.dark_theme = get_dark_theme()
     page.vertical_alignment = ft.MainAxisAlignment.CENTER
 
-    storage_service = LocalStorageService()
-    storage_repository = StorageRepository(storage_service)
     config_repository = ConfigRepository()
+    storage_repository = LocalStorageRepository()
     is_first_time = config_repository.check_initial_setup()
 
     # Initialize page contents and routing
-    home_page = Home_Content(page, config_repository)
-    setup_page = Setup_Content(page, config_repository, storage_repository)
+    home_page = Home_Content(page, config_repository, storage_repository)
+    setup_page = Setup_Content(page, config_repository)
+    workout_creation_page = Workout_Creation_Content(page, storage_repository)
 
     content_column = ft.Column(expand=True)
 
@@ -63,22 +62,20 @@ def main(page: ft.Page):
         troute = ft.TemplateRoute(page.route)
         content_column.controls.clear()
 
-        if is_first_time:
-            content_column.controls.append(setup_page.get_content())
-            # Hide navigation elements for setup
-            page.bottom_appbar.visible = False
-            page.floating_action_button.visible = False
+        if troute.match("/"):
+            log.debug(f"ROUTING TO HOME")
+            content_column.controls.append(home_page.get_content())
+            page.bottom_appbar.visible = True
+            page.floating_action_button.visible = True
+        elif troute.match("/create_workout"):
+            content_column.controls.append(
+                workout_creation_page.get_content()
+            )
         else:
-            if troute.match("/"):
-                log.debug(f"ROUTEING TO HOME")
-                content_column.controls.append(home_page.get_content())
-                page.bottom_appbar.visible = True
-                page.floating_action_button.visible = True
-            else:
-                log.debug(f"NO MATCH FOUND, ROUTING TO HOME")
-                content_column.controls.append(home_page.get_content())
-                page.bottom_appbar.visible = True
-                page.floating_action_button.visible = True
+            log.debug(f"NO MATCH FOUND, ROUTING TO HOME")
+            content_column.controls.append(home_page.get_content())
+            page.bottom_appbar.visible = True
+            page.floating_action_button.visible = True
 
         page.update()
 

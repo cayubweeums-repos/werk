@@ -11,6 +11,7 @@ flet = "^0.25.1"
 rich = "^13.9.4"
 httpx = "^0.28.1"
 aiosqlite = "^0.20.0"
+sqlalchemy = "^2.0.36"
 
 
 [build-system]

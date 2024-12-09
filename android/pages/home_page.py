@@ -5,10 +5,18 @@ import logging
 
 
 class Home_Content:
-    def __init__(self, page, config_repository):
+    def __init__(self, page, config_repository, storage_repository):
         self.page = page
         self.config_repository = config_repository
         self.logger = logging.getLogger("frontend_main")
+
+        self.storage = storage_repository
+        self.suggestions = self.storage.get_exercise_suggestions()
+        
+        self.exercise_search = ft.AutoComplete(
+            suggestions=self.suggestions,
+            on_select=lambda e: print(e.control.selected_index, e.selection)
+        )
 
         self.page.update()
 
@@ -26,7 +34,7 @@ class Home_Content:
                         ft.Container(height=20),
                         ft.ElevatedButton(
                             "Get Started",
-                            icon=ft.icons.ROCKET_LAUNCH,
+                            icon=ft.Icons.ROCKET_LAUNCH,
                             style=ft.ButtonStyle(
                                 shape=ft.RoundedRectangleBorder(radius=10),
                             )
@@ -37,7 +45,8 @@ class Home_Content:
                                 selectable=True,
                             ),
                             padding=50,
-                        )
+                        ),
+                        self.exercise_search
                     ],
                     horizontal_alignment=ft.CrossAxisAlignment.CENTER,
                 ),

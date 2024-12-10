@@ -6,7 +6,7 @@ class ExerciseCard(ft.UserControl):
         self.exercise_name = exercise_name
         self.on_delete = on_delete
         
-    def build(self):
+        # Initialize input fields in constructor
         self.weight_input = ft.TextField(
             label="Weight (lbs)",
             width=100,
@@ -24,7 +24,8 @@ class ExerciseCard(ft.UserControl):
             width=80,
             keyboard_type=ft.KeyboardType.NUMBER
         )
-        
+    
+    def build(self):
         return ft.Card(
             content=ft.Container(
                 content=ft.Column([

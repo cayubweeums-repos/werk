@@ -16,6 +16,7 @@ from pages.first_time_setup import Setup_Content
 from repositories.config_repository import ConfigRepository
 from repositories.local_storage import LocalStorageRepository
 from pages.workout_creation import Workout_Creation_Content
+from pages.workout_list import Workout_List_Content
 
 
 """
@@ -66,10 +67,28 @@ def main(page: ft.Page):
             content_column.controls.append(home_page.get_content())
             page.bottom_appbar.visible = True
             page.floating_action_button.visible = True
+        elif troute.match("/create_workout?:query"):
+            print(f"ROUTING TO WORKOUT CREATION with edit mode")
+            query_params = {}
+            if "?" in page.route:
+                query_string = page.route.split("?")[1]
+                query_params = dict(param.split("=") for param in query_string.split("&"))
+                print(f"parsed query params: {query_params}")
+            # Check if editing existing workout
+            if query_params.get("edit") == "true":
+                print(f"if statement for editing existing workout")
+                workout_id = query_params.get("workout_id")
+                workouts = storage_repository.get_workouts()
+                workout_data = next((w for w in workouts if w["id"] == workout_id), None)
+                workout_creation_page = Workout_Creation_Content(page, storage_repository, workout_data=workout_data)
+            content_column.controls.append(workout_creation_page.get_content())
         elif troute.match("/create_workout"):
             workout_creation_page = Workout_Creation_Content(page, storage_repository)
+            content_column.controls.append(workout_creation_page.get_content())
+        elif troute.match("/list_workout"):
+            workout_list_page = Workout_List_Content(page, storage_repository)
             content_column.controls.append(
-                workout_creation_page.get_content()
+                workout_list_page.get_content()
             )
         else:
             log.debug(f"NO MATCH FOUND, ROUTING TO HOME")
@@ -78,7 +97,6 @@ def main(page: ft.Page):
             page.floating_action_button.visible = True
 
         page.update()
-
     page.on_route_change = route_change
 
     page.bottom_appbar = create_bottom_app_bar(page)

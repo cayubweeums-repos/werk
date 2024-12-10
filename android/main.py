@@ -46,13 +46,12 @@ def main(page: ft.Page):
     page.vertical_alignment = ft.MainAxisAlignment.CENTER
 
     config_repository = ConfigRepository()
-    storage_repository = LocalStorageRepository()
+    storage_repository = LocalStorageRepository() # TODO this should be dynamic and be the local storage if the user picked it otherwise should be the remote storage 
     is_first_time = config_repository.check_initial_setup()
 
     # Initialize page contents and routing
     home_page = Home_Content(page, config_repository, storage_repository)
     setup_page = Setup_Content(page, config_repository)
-    workout_creation_page = Workout_Creation_Content(page, storage_repository)
 
     content_column = ft.Column(expand=True)
 
@@ -68,6 +67,7 @@ def main(page: ft.Page):
             page.bottom_appbar.visible = True
             page.floating_action_button.visible = True
         elif troute.match("/create_workout"):
+            workout_creation_page = Workout_Creation_Content(page, storage_repository)
             content_column.controls.append(
                 workout_creation_page.get_content()
             )

@@ -31,7 +31,7 @@ class ExerciseCard(ft.UserControl):
                     ft.Row([
                         ft.Text(self.exercise_name, size=16, weight=ft.FontWeight.BOLD),
                         ft.IconButton(
-                            icon=ft.icons.DELETE,
+                            icon=ft.Icons.DELETE,
                             on_click=self.delete_clicked
                         )
                     ], alignment=ft.MainAxisAlignment.SPACE_BETWEEN),

@@ -10,7 +10,8 @@ class StorageInterface(ABC):
         pass
         
     @abstractmethod
-    def save_workout(self, workout):
+    def save_workout(self, workout_data):
+        """Save workout to configured storage"""
         pass
         
     @abstractmethod

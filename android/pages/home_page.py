@@ -11,12 +11,6 @@ class Home_Content:
         self.logger = logging.getLogger("frontend_main")
 
         self.storage = storage_repository
-        self.suggestions = self.storage.get_exercise_suggestions()
-        
-        self.exercise_search = ft.AutoComplete(
-            suggestions=self.suggestions,
-            on_select=lambda e: print(e.control.selected_index, e.selection)
-        )
 
         self.page.update()
 
@@ -46,8 +40,7 @@ class Home_Content:
                             ),
                             padding=50,
                         ),
-                        self.exercise_search
-                    ],
+                        ],
                     horizontal_alignment=ft.CrossAxisAlignment.CENTER,
                 ),
                 padding=50,

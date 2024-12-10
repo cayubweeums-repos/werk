@@ -1,16 +1,16 @@
 import flet as ft
 import logging
-from repositories.storage_repository import StorageRepository
+import os
+import json
+import httpx
 from repositories.config_repository import ConfigRepository
 
 class Setup_Content:
-    def __init__(self, page: ft.Page, config_repository: ConfigRepository, storage_repository: StorageRepository):
+    def __init__(self, page: ft.Page, config_repository: ConfigRepository):
         self.page = page
         self.selected_storage = None
         self.logger = logging.getLogger("frontend_main")
         self.config_repository = ConfigRepository()
-        self.storage_repository = storage_repository
-
 
         self.content = ft.Column(
             [
@@ -79,9 +79,10 @@ class Setup_Content:
     def setup_storage(self, e):
         try:
             if self.selected_storage == "local":
-                # Initialize local storage DB
-                self.storage_repository._service._init_db()
-                
+                # Initialize local storage
+                self._init_local_storage()
+                self._fetch_and_store_exercises()
+
                 # Set configs
                 local_config = {"type": "sqlite"}
                 self.config_repository.set_config("connection.config", local_config)
@@ -96,13 +97,13 @@ class Setup_Content:
                 self.logger.debug("Navigating to home")
                 self.page.go("/")
                 self.logger.debug("Gone to home")
-                # self.page.update()
                 
             elif self.selected_storage == "hosted":
                 self.logger.error("Self hosted storage not implemented yet, Selecting local storage instead")
                 # Fallback to local storage
-                self.storage_repository._service._init_db()
-                
+                self._init_local_storage()
+                self._fetch_and_store_exercises()
+
                 # Set configs
                 local_config = {"type": "sqlite"}
                 self.config_repository.set_config("connection.config", local_config)
@@ -123,3 +124,53 @@ class Setup_Content:
 
     def get_content(self):
         return self.content
+
+    def _init_local_storage(self):
+        """Initialize local storage structure"""
+        
+        data_dir = "./data"
+        if not os.path.exists(data_dir):
+            os.makedirs(data_dir)
+            
+        storage_template = {
+            "workouts": [],  # User created workout templates
+            "workout_logs": []  # Logs of completed workouts
+        }
+        
+        storage_path = os.path.join(data_dir, "local_storage.json")
+        with open(storage_path, 'w') as f:
+            json.dump(storage_template, f, indent=2)
+        
+        self.logger.debug(f"Initialized local storage at {storage_path}")
+
+    def _fetch_and_store_exercises(self):
+        """Fetch exercises from GitHub and store locally"""
+        
+        EXERCISES_URL = "https://raw.githubusercontent.com/cayubweeums-repos/exercise-db/main/dist/exercises.json"
+        
+        try:
+            # Fetch exercises
+            with httpx.Client() as client:
+                response = client.get(EXERCISES_URL)
+                response.raise_for_status()
+                exercises = response.json()
+                
+            # Add autocomplete keys to each exercise
+            for exercise in exercises:
+                exercise['autocomplete_keys'] = self._generate_autocomplete_keys(exercise['name'])
+                
+            # Store exercises
+            exercises_path = os.path.join("./data", "exercises.json")
+            with open(exercises_path, 'w') as f:
+                json.dump(exercises, f, indent=2)
+                
+            self.logger.debug(f"Successfully stored exercises with autocomplete keys at {exercises_path}")
+            
+        except Exception as e:
+            self.logger.error(f"Error processing exercises: {str(e)}")
+            raise
+
+    def _generate_autocomplete_keys(self, exercise_name: str) -> str:
+        """Generate space-separated substrings for autocomplete"""
+        lower_name = exercise_name.lower()
+        return " ".join([lower_name[:i] for i in range(1, len(lower_name) + 1)])

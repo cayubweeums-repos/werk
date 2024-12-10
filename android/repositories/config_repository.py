@@ -9,6 +9,12 @@ class ConfigRepository:
         
     def get_config(self, key: str):
         try:
+            # Create config.json if it doesn't exist
+            if not os.path.exists(self.config_path):
+                os.makedirs(os.path.dirname(self.config_path), exist_ok=True)
+                with open(self.config_path, 'w') as f:
+                    json.dump({}, f)
+
             with open(self.config_path, 'r') as f:
                 config = json.load(f)
                 return config.get(key)

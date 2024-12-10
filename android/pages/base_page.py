@@ -10,14 +10,22 @@ def create_bottom_app_bar(page: ft.Page):
                     icon=ft.Icons.FITNESS_CENTER,
                     icon_color=ft.Colors.PRIMARY,
                     icon_size=32,
-                    on_click=lambda _: page.go('/create_workout')
+                    on_click=lambda _: page.go('/list_workout')
 
                 ),
                 ft.Container(expand=True),
                 ft.IconButton(
-                    icon=ft.Icons.HISTORY,
+                    icon=ft.Icons.HOME,
                     icon_color=ft.Colors.PRIMARY,
                     icon_size=32,
+                    on_click=lambda _: page.go('/')
+                ),
+                ft.Container(expand=True),
+                ft.IconButton(
+                    icon=ft.Icons.ADD,
+                    icon_color=ft.Colors.PRIMARY,
+                    icon_size=32,
+                    on_click=lambda _: page.go('/create_workout')
                 ),
             ]
         ),

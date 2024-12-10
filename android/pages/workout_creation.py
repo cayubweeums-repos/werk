@@ -2,10 +2,11 @@ import flet as ft
 from custom_components.controls.exercise_card import ExerciseCard
 
 class Workout_Creation_Content:
-    def __init__(self, page: ft.Page, storage_repository):
+    def __init__(self, page: ft.Page, storage_repository, workout_data=None):
         self.page = page
         self.storage = storage_repository
         self.exercise_cards = []
+        self.editing_workout = workout_data
         
         # Get exercise suggestions
         self.suggestions = self.storage.get_exercise_suggestions()
@@ -32,6 +33,27 @@ class Workout_Creation_Content:
             )
         ])
 
+        if self.editing_workout:
+            self.load_workout_for_editing()
+
+    def load_workout_for_editing(self):
+        self.workout_name.value = self.editing_workout["name"]
+        
+        # Add existing exercises
+        for exercise in self.editing_workout["exercises"]:
+            card = ExerciseCard(
+                exercise["name"],
+                on_delete=self.remove_exercise
+            )
+            card.weight_input.value = exercise["weight"]
+            card.sets_input.value = exercise["sets"]
+            card.reps_input.value = exercise["reps"]
+            
+            self.exercise_cards.append(card)
+            self.exercises_column.controls.append(card)
+            
+        self.page.update()
+
     def save_workout(self, e):
         workout_data = {
             "name": self.workout_name.value,
@@ -47,13 +69,21 @@ class Workout_Creation_Content:
         }
         
         try:
-            self.storage.save_workout(workout_data)
-            # Show success message
-            self.page.show_snack_bar(ft.SnackBar(content=ft.Text("Workout saved!")))
-            self.page.go("/")
+            if self.editing_workout:
+                # Add workout ID if editing
+                workout_data["id"] = self.editing_workout["id"]
+                self.storage.update_workout(workout_data)
+            else:
+                self.storage.save_workout(workout_data)
+                
+            self.page.show_snack_bar(
+                ft.SnackBar(content=ft.Text("Workout saved!"))
+            )
+            self.page.go("/list_workout")
         except Exception as e:
-            # Show error message
-            self.page.show_snack_bar(ft.SnackBar(content=ft.Text(f"Error saving workout: {str(e)}")))
+            self.page.show_snack_bar(
+                ft.SnackBar(content=ft.Text(f"Error saving workout: {str(e)}"))
+            )
         
     def add_exercise(self, e):
         if e.selection.value:

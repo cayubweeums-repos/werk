@@ -22,3 +22,11 @@ class StorageInterface(ABC):
     def get_exercise_suggestions(self):
         """Get all exercise autocomplete suggestions"""
         pass
+
+    def delete_workout(self, workout_data):
+        """Delete workout from storage"""
+        pass
+        
+    def update_workout(self, workout_data):
+        """Update existing workout in storage"""
+        pass

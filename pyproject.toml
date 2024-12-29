@@ -13,6 +13,8 @@ httpx = "^0.28.1"
 aiosqlite = "^0.20.0"
 sqlalchemy = "^2.0.36"
 
+[tool.flet]
+app.module = "android.main"
 
 [build-system]
 requires = ["poetry-core"]

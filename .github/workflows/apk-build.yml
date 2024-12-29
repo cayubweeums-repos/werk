@@ -56,7 +56,7 @@ jobs:
         flutter config --no-analytics # disable flutter analytics
         flet build apk \
           --verbose \
-          --module-name ./android/main.py \
+          --module-name ./android \
           --project werk \
           --build-number ${{ env.BUILD_NUMBER }} \
           --build-version ${{ env.BUILD_VERSION }}

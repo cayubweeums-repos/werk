@@ -17,6 +17,7 @@ from repositories.config_repository import ConfigRepository
 from repositories.local_storage import LocalStorageRepository
 from pages.workout_creation import Workout_Creation_Content
 from pages.workout_list import Workout_List_Content
+from pages.workout_performance import Workout_Performance_Content
 
 
 """
@@ -90,6 +91,16 @@ def main(page: ft.Page):
             content_column.controls.append(
                 workout_list_page.get_content()
             )
+        elif troute.match("/perform_workout?:query"):
+            workout_id = page.route.split("=")[1]
+            workout_data = storage_repository.get_workout_by_id(workout_id)
+            content_column.controls = [
+                Workout_Performance_Content(
+                    page,
+                    storage_repository,
+                    workout_data
+                ).get_content()
+            ]
         else:
             log.debug(f"NO MATCH FOUND, ROUTING TO HOME")
             content_column.controls.append(home_page.get_content())

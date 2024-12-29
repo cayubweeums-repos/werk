@@ -28,12 +28,16 @@ class Workout_List_Content:
             WorkoutCard(
                 workout_data=workout,
                 on_delete=self.delete_workout,
-                on_edit=self.edit_workout
+                on_edit=self.edit_workout,
+                on_start=self.start_workout
             )
             for workout in workouts
         ]
         self.page.update()
         
+    def start_workout(self, workout_data):
+        self.page.go(f'/perform_workout?workout_id={workout_data["id"]}')
+
     def delete_workout(self, workout_data):
         try:
             # Add delete_workout method to storage interface

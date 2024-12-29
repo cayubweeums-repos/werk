@@ -30,3 +30,7 @@ class StorageInterface(ABC):
     def update_workout(self, workout_data):
         """Update existing workout in storage"""
         pass
+
+    def get_workout_by_id(self, workout_id: str):
+        """Get specific workout by ID from storage"""
+        pass

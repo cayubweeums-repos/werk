@@ -27,6 +27,13 @@ def create_bottom_app_bar(page: ft.Page):
                     icon_size=32,
                     on_click=lambda _: page.go('/create_workout')
                 ),
+                ft.Container(expand=True),
+                ft.IconButton(
+                    icon=ft.Icons.BAR_CHART,
+                    icon_color=ft.Colors.PRIMARY,
+                    icon_size=32,
+                    on_click=lambda _: page.go('/stats')
+                ),
             ]
         ),
     )

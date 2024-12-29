@@ -18,6 +18,7 @@ from repositories.local_storage import LocalStorageRepository
 from pages.workout_creation import Workout_Creation_Content
 from pages.workout_list import Workout_List_Content
 from pages.workout_performance import Workout_Performance_Content
+from pages.performance_stats import Performance_Stats_Content
 
 
 """
@@ -101,6 +102,8 @@ def main(page: ft.Page):
                     workout_data
                 ).get_content()
             ]
+        elif page.route == "/stats":
+            content_column.controls = [Performance_Stats_Content(page).get_content()]
         else:
             log.debug(f"NO MATCH FOUND, ROUTING TO HOME")
             content_column.controls.append(home_page.get_content())

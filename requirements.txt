@@ -1,5 +1,1 @@
 flet
-rich
-httpx
-aiosqlite
-sqlalchemy

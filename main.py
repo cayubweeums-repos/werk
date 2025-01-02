@@ -6,9 +6,6 @@ import flet as ft
 import os
 import logging
 import datetime
-from rich.logging import RichHandler
-from rich.traceback import install
-from rich import pretty
 from utils.theme import get_app_theme, get_dark_theme
 from pages.base_page import create_bottom_app_bar, create_floating_action_button
 from pages.home_page import Home_Content
@@ -36,10 +33,35 @@ elif not os.path.exists('./data/logs'):
 Logging config
 #------------------------------------------
 """
+class ColoredFormatter(logging.Formatter):
+    COLORS = {
+        'DEBUG': '\033[94m',    # Blue
+        'INFO': '\033[92m',     # Green
+        'WARNING': '\033[93m',  # Yellow
+        'ERROR': '\033[91m',    # Red
+        'CRITICAL': '\033[91m', # Red
+        'RESET': '\033[0m'      # Reset
+    }
+
+    def format(self, record):
+        color = self.COLORS.get(record.levelname, self.COLORS['RESET'])
+        record.levelname = f"{color}{record.levelname}{self.COLORS['RESET']}"
+        return super().format(record)
+
+# Setup logging
 FORMAT = '%(asctime)s %(levelname)-8s %(message)s'
-logging.basicConfig(filename='./data/logs/{}.log'.format(_time), format=FORMAT, level=logging.DEBUG, datefmt="[%X]")
+console_handler = logging.StreamHandler()
+console_handler.setFormatter(ColoredFormatter(FORMAT))
+
+logging.basicConfig(
+    filename=f'./data/logs/{_time}.log',
+    format=FORMAT,
+    level=logging.DEBUG,
+    datefmt="[%X]"
+)
+
 log = logging.getLogger("frontend_main")
-log.addHandler(RichHandler())
+log.addHandler(console_handler)
 
 def main(page: ft.Page):
     page.title = "W.I.P. Werk app"

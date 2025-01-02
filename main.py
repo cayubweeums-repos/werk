@@ -51,8 +51,6 @@ def main(page: ft.Page):
     page.theme = get_app_theme()
     page.dark_theme = get_dark_theme()
     page.vertical_alignment = ft.MainAxisAlignment.CENTER
-    ph = ft.PermissionHandler()
-    page.overlay.append(ph)
 
     config_repository = ConfigRepository()
     storage_repository = LocalStorageRepository() # TODO this should be dynamic and be the local storage if the user picked it otherwise should be the remote storage 
@@ -60,7 +58,7 @@ def main(page: ft.Page):
 
     # Initialize page contents and routing
     home_page = Home_Content(page, config_repository, storage_repository)
-    setup_page = Setup_Content(page, ph, config_repository)
+    setup_page = Setup_Content(page, config_repository)
 
     content_column = ft.Column(expand=True)
 

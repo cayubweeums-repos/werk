@@ -6,10 +6,10 @@ import httpx
 from repositories.config_repository import ConfigRepository
 
 class Setup_Content:
-    def __init__(self, page: ft.Page, ph: ft.PermissionHandler, config_repository: ConfigRepository):
+    def __init__(self, page: ft.Page, config_repository: ConfigRepository):
         self.page = page
         self.selected_storage = None
-        self.ph = ph
+        self.ph = ft.PermissionHandler()
         self.logger = logging.getLogger("frontend_main")
         self.config_repository = ConfigRepository()
 
@@ -133,6 +133,8 @@ class Setup_Content:
             self.logger.error(f"Error setting up storage: {str(ex)}")
 
     def get_content(self):
+        self.page.overlay.append(ph)
+        self.page.update()
         return self.content
 
     def _init_local_storage(self):

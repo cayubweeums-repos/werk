@@ -8,6 +8,7 @@ class LocalStorageRepository(StorageInterface):
     def __init__(self):
         self.exercises_path = "./data/exercises.json"
         self.storage_path = "./data/local_storage.json"
+        self.workout_logs_path = "./data/workout_logs.json"
         
     def get_exercises(self):
         # Implementation for local JSON file
@@ -31,9 +32,34 @@ class LocalStorageRepository(StorageInterface):
         except Exception as e:
             raise Exception(f"Failed to get workouts: {str(e)}")
 
-    def log_workout(self):
-        # Implementation for local JSON file
-        pass
+    def log_workout(self, workout_performance: dict):
+
+        print("in storage repo logging workout")
+        
+        """Log a completed workout performance"""
+        try:
+            # Create logs file if doesn't exist
+            if not os.path.exists(self.workout_logs_path):
+                os.makedirs(os.path.dirname(self.workout_logs_path), exist_ok=True)
+                with open(self.workout_logs_path, 'w') as f:
+                    json.dump({'workout_logs': []}, f)
+
+            # Read existing logs
+            with open(self.workout_logs_path, 'r') as f:
+                logs = json.load(f)
+
+            # Add unique log ID
+            workout_performance['log_id'] = str(uuid.uuid4())
+            
+            # Add to logs
+            logs['workout_logs'].append(workout_performance)
+
+            # Write back to file
+            with open(self.workout_logs_path, 'w') as f:
+                json.dump(logs, f, indent=2)
+
+        except Exception as e:
+            raise Exception(f"Failed to log workout: {str(e)}")
 
     def save_workout(self, workout_data):
         """Save workout to local storage JSON file"""
@@ -111,3 +137,12 @@ class LocalStorageRepository(StorageInterface):
                 
         except Exception as e:
             raise Exception(f"Failed to update workout: {str(e)}")
+
+    def get_workout_by_id(self, workout_id: str):
+        """Get specific workout by ID from local storage"""
+        try:
+            workouts = self.get_workouts()
+            return next((workout for workout in workouts if workout['id'] == workout_id), None)
+        except Exception as e:
+            self.logger.error(f"Error getting workout by ID: {str(e)}")
+            return None

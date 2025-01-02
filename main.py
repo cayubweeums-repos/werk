@@ -6,9 +6,6 @@ import flet as ft
 import os
 import logging
 import datetime
-from rich.logging import RichHandler
-from rich.traceback import install
-from rich import pretty
 from utils.theme import get_app_theme, get_dark_theme
 from pages.base_page import create_bottom_app_bar, create_floating_action_button
 from pages.home_page import Home_Content
@@ -17,6 +14,8 @@ from repositories.config_repository import ConfigRepository
 from repositories.local_storage import LocalStorageRepository
 from pages.workout_creation import Workout_Creation_Content
 from pages.workout_list import Workout_List_Content
+from pages.workout_performance import Workout_Performance_Content
+from pages.performance_stats import Performance_Stats_Content
 
 
 """
@@ -34,10 +33,35 @@ elif not os.path.exists('./data/logs'):
 Logging config
 #------------------------------------------
 """
+class ColoredFormatter(logging.Formatter):
+    COLORS = {
+        'DEBUG': '\033[94m',    # Blue
+        'INFO': '\033[92m',     # Green
+        'WARNING': '\033[93m',  # Yellow
+        'ERROR': '\033[91m',    # Red
+        'CRITICAL': '\033[91m', # Red
+        'RESET': '\033[0m'      # Reset
+    }
+
+    def format(self, record):
+        color = self.COLORS.get(record.levelname, self.COLORS['RESET'])
+        record.levelname = f"{color}{record.levelname}{self.COLORS['RESET']}"
+        return super().format(record)
+
+# Setup logging
 FORMAT = '%(asctime)s %(levelname)-8s %(message)s'
-logging.basicConfig(filename='./data/logs/{}.log'.format(_time), format=FORMAT, level=logging.DEBUG, datefmt="[%X]")
+console_handler = logging.StreamHandler()
+console_handler.setFormatter(ColoredFormatter(FORMAT))
+
+logging.basicConfig(
+    filename=f'./data/logs/{_time}.log',
+    format=FORMAT,
+    level=logging.DEBUG,
+    datefmt="[%X]"
+)
+
 log = logging.getLogger("frontend_main")
-log.addHandler(RichHandler())
+log.addHandler(console_handler)
 
 def main(page: ft.Page):
     page.title = "W.I.P. Werk app"
@@ -90,6 +114,18 @@ def main(page: ft.Page):
             content_column.controls.append(
                 workout_list_page.get_content()
             )
+        elif troute.match("/perform_workout?:query"):
+            workout_id = page.route.split("=")[1]
+            workout_data = storage_repository.get_workout_by_id(workout_id)
+            content_column.controls = [
+                Workout_Performance_Content(
+                    page,
+                    storage_repository,
+                    workout_data
+                ).get_content()
+            ]
+        elif page.route == "/stats":
+            content_column.controls = [Performance_Stats_Content(page).get_content()]
         else:
             log.debug(f"NO MATCH FOUND, ROUTING TO HOME")
             content_column.controls.append(home_page.get_content())

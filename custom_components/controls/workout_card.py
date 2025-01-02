@@ -1,11 +1,12 @@
 import flet as ft
 
 class WorkoutCard(ft.UserControl):
-    def __init__(self, workout_data, on_delete=None, on_edit=None):
+    def __init__(self, workout_data, on_delete=None, on_edit=None, on_start=None):
         super().__init__()
         self.workout_data = workout_data
         self.on_delete = on_delete
         self.on_edit = on_edit
+        self.on_start = on_start
         
     def build(self):
         exercises_list = ft.Column([
@@ -18,9 +19,13 @@ class WorkoutCard(ft.UserControl):
                 content=ft.Column([
                     ft.Row([
                         ft.Text(self.workout_data["name"], 
-                               size=20, 
-                               weight=ft.FontWeight.BOLD),
+                                size=20, 
+                                weight=ft.FontWeight.BOLD),
                         ft.Row([
+                            ft.IconButton(
+                                icon=ft.Icons.PLAY_ARROW,
+                                on_click=self.start_clicked
+                            ),
                             ft.IconButton(
                                 icon=ft.Icons.EDIT,
                                 on_click=self.edit_clicked
@@ -44,3 +49,7 @@ class WorkoutCard(ft.UserControl):
     def edit_clicked(self, e):
         if self.on_edit:
             self.on_edit(self.workout_data)
+
+    def start_clicked(self, e):
+        if self.on_start:
+            self.on_start(self.workout_data)

@@ -57,6 +57,7 @@ jobs:
         flet build apk \
           --verbose \
           --project werk \
+          --include-packages flet_permission_handler \
           --build-number ${{ env.BUILD_NUMBER }} \
           --build-version ${{ env.BUILD_VERSION }}
 

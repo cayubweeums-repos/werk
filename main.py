@@ -33,25 +33,8 @@ elif not os.path.exists('./data/logs'):
 Logging config
 #------------------------------------------
 """
-class ColoredFormatter(logging.Formatter):
-    COLORS = {
-        'DEBUG': '\033[94m',    # Blue
-        'INFO': '\033[92m',     # Green
-        'WARNING': '\033[93m',  # Yellow
-        'ERROR': '\033[91m',    # Red
-        'CRITICAL': '\033[91m', # Red
-        'RESET': '\033[0m'      # Reset
-    }
-
-    def format(self, record):
-        color = self.COLORS.get(record.levelname, self.COLORS['RESET'])
-        record.levelname = f"{color}{record.levelname}{self.COLORS['RESET']}"
-        return super().format(record)
-
 # Setup logging
 FORMAT = '%(asctime)s %(levelname)-8s %(message)s'
-console_handler = logging.StreamHandler()
-console_handler.setFormatter(ColoredFormatter(FORMAT))
 
 logging.basicConfig(
     filename=f'./data/logs/{_time}.log',
@@ -61,7 +44,6 @@ logging.basicConfig(
 )
 
 log = logging.getLogger("frontend_main")
-log.addHandler(console_handler)
 
 def main(page: ft.Page):
     page.title = "W.I.P. Werk app"
@@ -69,6 +51,8 @@ def main(page: ft.Page):
     page.theme = get_app_theme()
     page.dark_theme = get_dark_theme()
     page.vertical_alignment = ft.MainAxisAlignment.CENTER
+    ph = ft.PermissionHandler()
+    page.overlay.append(ph)
 
     config_repository = ConfigRepository()
     storage_repository = LocalStorageRepository() # TODO this should be dynamic and be the local storage if the user picked it otherwise should be the remote storage 
@@ -76,7 +60,7 @@ def main(page: ft.Page):
 
     # Initialize page contents and routing
     home_page = Home_Content(page, config_repository, storage_repository)
-    setup_page = Setup_Content(page, config_repository)
+    setup_page = Setup_Content(page, ph, config_repository)
 
     content_column = ft.Column(expand=True)
 

@@ -9,6 +9,7 @@ class Setup_Content:
     def __init__(self, page: ft.Page, config_repository: ConfigRepository):
         self.page = page
         self.selected_storage = None
+        self.ph = ft.PermissionHandler()
         self.logger = logging.getLogger("frontend_main")
         self.config_repository = ConfigRepository()
 
@@ -24,6 +25,11 @@ class Setup_Content:
                         ft.Text("Let's get you set up", 
                             size=20,
                             text_align=ft.TextAlign.CENTER
+                        ),
+                        ft.OutlinedButton(
+                            "Request Storage Permission",
+                            data=ft.PermissionType.STORAGE,
+                            on_click=self.request_permission,
                         ),
                         ft.Container(height=20),  # Spacing
                         ft.Divider(),
@@ -72,6 +78,10 @@ class Setup_Content:
             alignment=ft.MainAxisAlignment.CENTER,
             expand=True
         )
+
+    def request_permission(self, e):
+        o = ph.request_permission(e.control.data)
+        page.add(ft.Text(f"Requested {e.control.data.name}: {o}"))
 
     def storage_changed(self, e):
         self.selected_storage = e.control.value
@@ -123,6 +133,8 @@ class Setup_Content:
             self.logger.error(f"Error setting up storage: {str(ex)}")
 
     def get_content(self):
+        self.page.overlay.append(ph)
+        self.page.update()
         return self.content
 
     def _init_local_storage(self):

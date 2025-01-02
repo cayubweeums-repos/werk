@@ -12,3 +12,11 @@ flet = "^0.25.2"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.flet.android.permission] # --android-permissions
+"android.permission.STORAGE_INTERNAL" = true
+"android.permission.READ_EXTERNAL_STORAGE" = true
+"android.permission.WRITE_EXTERNAL_STORAGE" = true
+
+#[tool.flet.android.feature] # --android-features
+#"android.hardware.camera" = false
